@@ -1,45 +1,58 @@
+// server.js
 const express = require('express');
-
+const bodyParser = require('body-parser');
+const mysql = require('mysql2');
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+const port = 3306;
 
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Database connection
+const db = mysql.createConnection({
+    host: 'blp3lcfasudctqte0pq4-mysql.services.clever-cloud.com',
+    user: 'unpzvnz3vygclvay',
+    password: 'zNWrPRJdb1Umc32IzpDd',
+    database: 'blp3lcfasudctqte0pq4'
+});
+// USSD route
 app.post('/ussd', (req, res) => {
-    // Read the variables sent via POST from our API
-    const {
-        sessionId,
-        serviceCode,
-        phoneNumber,
-        text,
-    } = req.body;
+    let { sessionId, serviceCode, phoneNumber, text } = req.body;
 
     let response = '';
 
-    if (text == '') {
-        // This is the first request. Note how we start the response with CON
-        response = `CON What would you like to check
-        1. My account
-        2. My phone number`;
-    } else if ( text == '1') {
-        // Business logic for first level response
-        response = `CON Choose account information you want to view
-        1. Account number`;
-    } else if ( text == '2') {
-        // Business logic for first level response
-        // This is a terminal request. Note how we start the response with END
-        response = `END Your phone number is ${phoneNumber}`;
-    } else if ( text == '1*1') {
-        // This is a second level response where the user selected 1 in the first instance
-        const accountNumber = 'ACC100101';
-        // This is a terminal request. Note how we start the response with END
-        response = `END Your account number is ${accountNumber}`;
+    if (text === '') {
+        response = `CON Welcome to the Voting Service
+        1. BUKURU Janvier
+        2. KAYITESI Chartine`;
+    } else if (text === '1') {
+        response = `END You voted for Candidate A`;
+        saveVote(phoneNumber, 'Candidate A');
+    } else if (text === '2') {
+        response = `END You voted for Candidate B`;
+        saveVote(phoneNumber, 'Candidate B');
+    } else {
+        response = `END Invalid option`;
     }
 
-    // Send the response back to the API
-    res.set('Content-Type: text/plain');
+    res.set('Content-Type', 'text/plain');
     res.send(response);
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("server listening :", PORT));
+const saveVote = (voterId, candidate) => {
+    let query = 'INSERT INTO votes (voter_id, candidate) VALUES (?, ?)';
+    db.query(query, [voterId, candidate], (err, result) => {
+        if (err) throw err;
+        console.log('Vote saved');
+    });
+};
+// Home route
+app.get('/', (req, res) => {
+    res.send('USSD Voting Application');
+});
+
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
