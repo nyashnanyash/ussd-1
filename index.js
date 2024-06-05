@@ -12,10 +12,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Database connection
 const db = mysql.createConnection({
-    host: 'blp3lcfasudctqte0pq4-mysql.services.clever-cloud.com',
-    user: 'unpzvnz3vygclvay',
-    password: 'zNWrPRJdb1Umc32IzpDd',
-    database: 'blp3lcfasudctqte0pq4'
+    host: 'bdqhkrtatoqrzc9mvw10-mysql.services.clever-cloud.com',
+    user: 'uli0c6kzqscfp2gz',
+    password: 'iRnqEollaydTw9VqJpNN',
+    database: 'bdqhkrtatoqrzc9mvw10'
 });
 // USSD route
 app.post('/ussd', (req, res) => {
