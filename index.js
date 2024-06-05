@@ -19,8 +19,9 @@ app.post('/ussd', (req, res) => {
     } else if (text === '1' || text === '2') {
         // Save user's language choice and move to the main menu
         const language = text === '1' ? 'English' : 'Kinyarwanda';
+        const optionsText = language === 'English' ? 'Choose an option:' : 'Hitamo ikibazo:';
         response = `CON Language selected: ${language}\n`;
-        response += `Choose an option:\n`;
+        response += `${optionsText}\n`;
         response += `1. Register\n`;
         response += `2. Vote\n`;
         response += `3. View Information\n`;
@@ -30,7 +31,8 @@ app.post('/ussd', (req, res) => {
         response = `END Registration feature is currently not available.`;
     } else if (text === '1*2') {
         // Vote option selected
-        response = `CON Select a candidate:\n`;
+        const candidateText = language === 'English' ? 'Select a candidate:\n' : 'Hitamo umukandida:\n';
+        response = `CON ${candidateText}`;
         response += `1. Raymond IGABINEZA\n`;
         response += `2. Florence UMUTONIWASE\n`;
         response += `3. Jean Paul KWIBUKA\n`;
@@ -53,13 +55,15 @@ app.post('/ussd', (req, res) => {
             'Danny HABIMANA'
         ];
         if (candidateIndex >= 0 && candidateIndex < candidates.length) {
-            response = `END Thank you for voting for ${candidates[candidateIndex]}!`;
+            const thankYouText = language === 'English' ? 'Thank you for voting for' : 'Murakoze kuba wamutoye inshuti';
+            response = `END ${thankYouText} ${candidates[candidateIndex]}!`;
         } else {
-            response = `END Invalid selection. Please try again.`;
+            const invalidText = language === 'English' ? 'Invalid selection. Please try again.' : 'Ikibazo batili. Ongera ugerageze';
+            response = `END ${invalidText}`;
         }
     } else {
-        // Invalid input
-        response = `END Invalid input. Please try again.`;
+        const invalidInputText = language === 'English' ? 'Invalid input. Please try again.' : 'Ijambo batili. Ongera ugerageze';
+        response = `END ${invalidInputText}`;
     }
 
     // Send the response back to the API
