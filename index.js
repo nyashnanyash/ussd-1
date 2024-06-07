@@ -19,6 +19,7 @@ const userVotes = {};
 
 app.post('/ussd', (req, res) => {
     const {
+        
         sessionId,
         serviceCode,
         phoneNumber,
